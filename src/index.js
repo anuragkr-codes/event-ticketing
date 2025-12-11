@@ -6,6 +6,7 @@ import { connectDB } from './db/mongoose.js';
 import { swaggerRouter } from './swagger.js';
 import { errorHandler } from './middlewares/error.middleware.js';
 import authRoutes from './routes/auth.routes.js';
+import userRoutes from './routes/users.routes.js';
 
 const PORT = process.env.PORT || 4000;
 const app = express();
@@ -16,6 +17,7 @@ if (process.env.NODE_ENV !== 'production') app.use(morgan('dev'));
 
 // routes
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
 app.use('/docs', swaggerRouter);
 
 // health

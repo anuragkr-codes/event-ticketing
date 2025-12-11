@@ -14,8 +14,17 @@ const options = {
     openapi: '3.0.0',
     info: { title: 'Event Ticketing API', version: '0.1.0' },
     servers: [{ url }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
   },
-  // path to APIs (we'll use JSDoc in routes)
   apis: ['./src/routes/*.js', './src/models/*.js'],
 };
 
