@@ -1,12 +1,10 @@
+import 'dotenv/config';
 import express from 'express';
-import dotenv from 'dotenv';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import { connectDB } from './db/mongoose.js';
 import { swaggerRouter } from './swagger.js';
 import { errorHandler } from './middlewares/error.middleware.js';
-
-dotenv.config();
 
 const PORT = process.env.PORT || 4000;
 const app = express();
