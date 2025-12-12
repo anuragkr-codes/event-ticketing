@@ -1,30 +1,7 @@
-import 'dotenv/config';
-import express from 'express';
-import morgan from 'morgan';
-import helmet from 'helmet';
+import app from './app.js';
 import { connectDB } from './db/mongoose.js';
-import { swaggerRouter } from './swagger.js';
-import { errorHandler } from './middlewares/error.middleware.js';
-import authRoutes from './routes/auth.routes.js';
-import userRoutes from './routes/users.routes.js';
 
 const PORT = process.env.PORT || 4000;
-const app = express();
-
-app.use(helmet());
-app.use(express.json());
-if (process.env.NODE_ENV !== 'production') app.use(morgan('dev'));
-
-// routes
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/users', userRoutes);
-app.use('/docs', swaggerRouter);
-
-// health
-app.get('/health', (req, res) => res.json({ status: 'ok' }));
-
-// global error handler
-app.use(errorHandler);
 
 const start = async () => {
   try {
@@ -38,4 +15,8 @@ const start = async () => {
   }
 };
 
-start();
+if (process.env.NODE_ENV !== 'test') {
+  start();
+}
+
+export { start };
