@@ -4,7 +4,7 @@ const router = express.Router();
 const { createEvent, listEvents, getEvent } = require('../controllers/event.controller');
 const { validateBody, validateQuery } = require('../middlewares/validate.middleware');
 const { createEventSchema, listEventsSchema } = require('../validators/event.validator');
-const { authenticate } = require('../middlewares/auth.middleware');
+const { authenticate, optionalAuthenticate } = require('../middlewares/auth.middleware');
 const { authorize } = require('../middlewares/authorize.middleware');
 
 /**
@@ -119,6 +119,8 @@ router.get('/', validateQuery(listEventsSchema), listEvents);
  *       200:
  *         description: event details
  */
-router.get('/:id', authenticate, getEvent); // allow unauthenticated? we will keep authenticate to detect owner/admin; you can make auth optional by keeping middleware conditional
+router.get('/:id', optionalAuthenticate, getEvent);
+//general users can view event details too if it's a published event
+//admin/organizer can view event details even if it's draft/cancelled
 
 module.exports = router;
