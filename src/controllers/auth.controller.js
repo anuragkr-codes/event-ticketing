@@ -1,10 +1,10 @@
-import bcrypt from 'bcryptjs';
-import { User } from '../models/user.model.js';
-import { signToken } from '../utils/jwt.js';
+const bcrypt = require('bcryptjs');
+const { User } = require('../models/user.model');
+const { signToken } = require('../utils/jwt');
 
 const SALT_ROUNDS = 10;
 
-export const register = async (req, res, next) => {
+const register = async (req, res, next) => {
   try {
     const { name, email, password, role } = req.body;
 
@@ -23,7 +23,7 @@ export const register = async (req, res, next) => {
   }
 };
 
-export const login = async (req, res, next) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -38,3 +38,5 @@ export const login = async (req, res, next) => {
     next(err);
   }
 };
+
+module.exports = { register, login };

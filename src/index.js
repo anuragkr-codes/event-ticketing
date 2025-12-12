@@ -1,5 +1,5 @@
-import app from './app.js';
-import { connectDB } from './db/mongoose.js';
+const app = require('./app');
+const { connectDB } = require('./db/mongoose');
 
 const PORT = process.env.PORT || 4000;
 
@@ -19,4 +19,4 @@ if (process.env.NODE_ENV !== 'test') {
   start();
 }
 
-export { start };
+module.exports = { start };

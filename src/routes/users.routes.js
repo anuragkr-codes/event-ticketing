@@ -1,7 +1,7 @@
-import express from 'express';
-import { getMe, listUsers, getUserById } from '../controllers/user.controller.js';
-import { authenticate } from '../middlewares/auth.middleware.js';
-import { authorize } from '../middlewares/authorize.middleware.js';
+const express = require('express');
+const { getMe, listUsers, getUserById } = require('../controllers/user.controller');
+const { authenticate } = require('../middlewares/auth.middleware');
+const { authorize } = require('../middlewares/authorize.middleware');
 const router = express.Router();
 
 /**
@@ -65,4 +65,4 @@ router.get('/', authenticate, authorize('admin'), listUsers);
  */
 router.get('/:id', authenticate, getUserById);
 
-export default router;
+module.exports = router;

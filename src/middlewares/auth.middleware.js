@@ -1,7 +1,7 @@
-import { verifyToken } from '../utils/jwt.js';
-import { User } from '../models/user.model.js';
+const { verifyToken } = require('../utils/jwt');
+const { User } = require('../models/user.model');
 
-export const authenticate = async (req, res, next) => {
+const authenticate = async (req, res, next) => {
   try {
     const header = req.headers.authorization;
     if (!header) return res.status(401).json({ message: 'Authorization required' });
@@ -17,3 +17,5 @@ export const authenticate = async (req, res, next) => {
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
+
+module.exports = { authenticate };

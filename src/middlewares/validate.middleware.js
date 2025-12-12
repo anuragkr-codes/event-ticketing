@@ -1,4 +1,4 @@
-export const validateBody = (schema) => (req, res, next) => {
+const validateBody = (schema) => (req, res, next) => {
   const { error, value } = schema.validate(req.body, { abortEarly: false, stripUnknown: true });
   if (error) {
     return res
@@ -8,3 +8,5 @@ export const validateBody = (schema) => (req, res, next) => {
   req.body = value;
   next();
 };
+
+module.exports = { validateBody };

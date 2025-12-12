@@ -1,9 +1,9 @@
-import { User } from '../models/user.model.js';
+const { User } = require('../models/user.model');
 
 /**
  * Return own profile (without password).
  */
-export const getMe = async (req, res, next) => {
+const getMe = async (req, res, next) => {
   try {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ message: 'Unauthorized' });
@@ -20,7 +20,7 @@ export const getMe = async (req, res, next) => {
 /**
  * Admin-only: list users (paginated)
  */
-export const listUsers = async (req, res, next) => {
+const listUsers = async (req, res, next) => {
   try {
     const page = Math.max(1, parseInt(req.query.page || '1', 10));
     const limit = Math.min(100, parseInt(req.query.limit || '20', 10));
@@ -44,7 +44,7 @@ export const listUsers = async (req, res, next) => {
  * Get user by id.
  * - accessible if requester is admin OR requester is the same user.
  */
-export const getUserById = async (req, res, next) => {
+const getUserById = async (req, res, next) => {
   try {
     const targetId = req.params.id;
     const requester = req.user;
@@ -63,3 +63,5 @@ export const getUserById = async (req, res, next) => {
     next(err);
   }
 };
+
+module.exports = { getMe, listUsers, getUserById };

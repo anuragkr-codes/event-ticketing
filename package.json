@@ -2,7 +2,6 @@
   "name": "nodeassignment",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon --watch src --exec node src/index.js",

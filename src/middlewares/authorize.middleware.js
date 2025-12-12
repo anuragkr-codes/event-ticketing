@@ -2,7 +2,7 @@
  * authorize.middleware.js
  * - Usage: authorize('admin') OR authorize('organizer', 'admin')
  */
-export const authorize = (...allowedRoles) => {
+const authorize = (...allowedRoles) => {
   return (req, res, next) => {
     try {
       if (!req.user) {
@@ -22,3 +22,5 @@ export const authorize = (...allowedRoles) => {
     }
   };
 };
+
+module.exports = { authorize };

@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-export const connectDB = async (mongoUri) => {
+const connectDB = async (mongoUri) => {
   if (!mongoUri) throw new Error('MONGO_URI not provided');
   try {
     await mongoose.connect(mongoUri);
@@ -10,3 +10,5 @@ export const connectDB = async (mongoUri) => {
     throw err;
   }
 };
+
+module.exports = { connectDB };

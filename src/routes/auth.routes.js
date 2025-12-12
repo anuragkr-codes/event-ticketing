@@ -39,10 +39,10 @@
  *           type: string
  */
 
-import express from 'express';
-import { register, login } from '../controllers/auth.controller.js';
-import { validateBody } from '../middlewares/validate.middleware.js';
-import { registerSchema, loginSchema } from '../validators/auth.validator.js';
+const express = require('express');
+const { register, login } = require('../controllers/auth.controller');
+const { validateBody } = require('../middlewares/validate.middleware');
+const { registerSchema, loginSchema } = require('../validators/auth.validator');
 
 const router = express.Router();
 
@@ -88,4 +88,4 @@ router.post('/register', validateBody(registerSchema), register);
  */
 router.post('/login', validateBody(loginSchema), login);
 
-export default router;
+module.exports = router;

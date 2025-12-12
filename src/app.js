@@ -1,11 +1,13 @@
-import 'dotenv/config';
-import express from 'express';
-import morgan from 'morgan';
-import helmet from 'helmet';
-import { swaggerRouter } from './swagger.js';
-import { errorHandler } from './middlewares/error.middleware.js';
-import authRoutes from './routes/auth.routes.js';
-import usersRoutes from './routes/users.routes.js';
+const dotenv = require('dotenv');
+dotenv.config();
+
+const express = require('express');
+const morgan = require('morgan');
+const helmet = require('helmet');
+const { swaggerRouter } = require('./swagger');
+const { errorHandler } = require('./middlewares/error.middleware');
+const authRoutes = require('./routes/auth.routes');
+const usersRoutes = require('./routes/users.routes');
 
 const app = express();
 
@@ -23,4 +25,4 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 // global error handler
 app.use(errorHandler);
 
-export default app;
+module.exports = app;
