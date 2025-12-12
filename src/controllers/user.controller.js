@@ -39,3 +39,27 @@ export const listUsers = async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * Get user by id.
+ * - accessible if requester is admin OR requester is the same user.
+ */
+export const getUserById = async (req, res, next) => {
+  try {
+    const targetId = req.params.id;
+    const requester = req.user;
+    if (!requester) return res.status(401).json({ message: 'Unauthorized' });
+
+    // Allow if admin or if requester id equals target id
+    if (requester.role !== 'admin' && requester.id !== targetId) {
+      return res.status(403).json({ message: 'Forbidden: insufficient role' });
+    }
+
+    const user = await User.findById(targetId).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    return res.json({ user });
+  } catch (err) {
+    next(err);
+  }
+};

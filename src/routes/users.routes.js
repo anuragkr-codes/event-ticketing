@@ -1,5 +1,5 @@
 import express from 'express';
-import { getMe, listUsers } from '../controllers/user.controller.js';
+import { getMe, listUsers, getUserById } from '../controllers/user.controller.js';
 import { authenticate } from '../middlewares/auth.middleware.js';
 import { authorize } from '../middlewares/authorize.middleware.js';
 const router = express.Router();
@@ -45,5 +45,24 @@ router.get('/me', authenticate, getMe);
  *         description: list of users
  */
 router.get('/', authenticate, authorize('admin'), listUsers);
+
+/**
+ * @openapi
+ * /users/{id}:
+ *   get:
+ *     summary: Get user by id (admin or self)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: user object
+ */
+router.get('/:id', authenticate, getUserById);
 
 export default router;
