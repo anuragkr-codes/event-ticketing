@@ -93,6 +93,13 @@ const promoteUser = async (req, res, next) => {
 
     const oldRole = user.role;
 
+    // Prevent updating to the same role
+    if (oldRole === role) {
+      return res.status(400).json({
+        message: `User already has the role '${role}'. No update needed.`,
+      });
+    }
+
     // Update role and add to role history
     user.role = role;
     if (!user.roleHistory) {
