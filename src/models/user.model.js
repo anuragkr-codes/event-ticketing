@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ['attendee', 'organizer', 'admin'], default: 'attendee' },
     roleHistory: [
       {
-        role: { type: String, enum: ['attendee', 'organizer', 'admin'], required: true },
+        oldRole: { type: String, enum: ['attendee', 'organizer', 'admin'], required: true },
+        newRole: { type: String, enum: ['attendee', 'organizer', 'admin'], required: true },
         changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         changedAt: { type: Date, default: Date.now },
       },

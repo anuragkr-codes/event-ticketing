@@ -106,7 +106,8 @@ const promoteUser = async (req, res, next) => {
       user.roleHistory = [];
     }
     user.roleHistory.push({
-      role,
+      oldRole,
+      newRole: role,
       changedBy: requester.id,
       changedAt: new Date(),
     });
