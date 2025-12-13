@@ -29,14 +29,33 @@ exports.getEventAttendees = async (req, res, next) => {
     // Fetch all bookings + user details
     const bookings = await Booking.find({ eventId }).lean();
 
-    const userIds = bookings.map((b) => b.userId);
+    // Aggregate tickets per user
+    const userTicketsMap = {};
+    for (const booking of bookings) {
+      const userId = booking.userId.toString();
+      if (!userTicketsMap[userId]) {
+        userTicketsMap[userId] = 0;
+      }
+      userTicketsMap[userId] += booking.qty;
+    }
+
+    const userIds = Object.keys(userTicketsMap);
     const users = await User.find({ _id: { $in: userIds } })
       .select('-password')
       .lean();
 
+    // Attach ticket count to each user
+    const attendeesWithTickets = users.map((user) => ({
+      ...user,
+      ticketsPurchased: userTicketsMap[user._id.toString()],
+    }));
+
+    const totalTickets = Object.values(userTicketsMap).reduce((sum, qty) => sum + qty, 0);
+
     return res.json({
-      attendees: users,
+      attendees: attendeesWithTickets,
       totalAttendees: users.length,
+      totalTickets,
     });
   } catch (err) {
     next(err);
