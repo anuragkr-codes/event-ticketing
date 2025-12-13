@@ -1,10 +1,11 @@
 {
-  "name": "nodeassignment",
+  "name": "event-ticketing",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon --watch src --exec node src/index.js",
+    "seed": "node src/db/seed.js",
     "lint": "eslint \"src/**/*.{js,jsx}\"",
     "format": "prettier --write \"src/**/*.{js,json,md}\"",
     "test": "cross-env NODE_ENV=test jest",

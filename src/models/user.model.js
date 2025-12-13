@@ -6,6 +6,13 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true },
     role: { type: String, enum: ['attendee', 'organizer', 'admin'], default: 'attendee' },
+    roleHistory: [
+      {
+        role: { type: String, enum: ['attendee', 'organizer', 'admin'], required: true },
+        changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        changedAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );

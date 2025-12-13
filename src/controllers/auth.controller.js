@@ -6,7 +6,7 @@ const SALT_ROUNDS = 10;
 
 const register = async (req, res, next) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     const existing = await User.findOne({ email });
     if (existing) {
@@ -14,7 +14,8 @@ const register = async (req, res, next) => {
     }
 
     const hashed = await bcrypt.hash(password, SALT_ROUNDS);
-    const user = await User.create({ name, email, password: hashed, role });
+    // Force role to 'attendee' for public registration - admins/organizers must be promoted by existing admins
+    const user = await User.create({ name, email, password: hashed, role: 'attendee' });
     const token = signToken({ userId: user._id, role: user.role });
 
     return res.status(201).json({ user, token });

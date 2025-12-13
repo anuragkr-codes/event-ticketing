@@ -1,7 +1,9 @@
 const express = require('express');
-const { getMe, listUsers, getUserById } = require('../controllers/user.controller');
+const { getMe, listUsers, getUserById, promoteUser } = require('../controllers/user.controller');
 const { authenticate } = require('../middlewares/auth.middleware');
 const { authorize } = require('../middlewares/authorize.middleware');
+const { validateBody } = require('../middlewares/validate.middleware');
+const { promoteUserSchema } = require('../validators/user.validator');
 const router = express.Router();
 
 /**
@@ -64,5 +66,47 @@ router.get('/', authenticate, authorize('admin'), listUsers);
  *         description: user object
  */
 router.get('/:id', authenticate, getUserById);
+
+/**
+ * @openapi
+ * /users/{id}/promote:
+ *   post:
+ *     summary: Promote user to a different role (admin only)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID to promote
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - role
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 enum: [attendee, organizer, admin]
+ *     responses:
+ *       200:
+ *         description: User role updated successfully
+ *       403:
+ *         description: Forbidden - admin access required
+ *       404:
+ *         description: User not found
+ */
+router.post(
+  '/:id/promote',
+  authenticate,
+  authorize('admin'),
+  validateBody(promoteUserSchema),
+  promoteUser
+);
 
 module.exports = router;

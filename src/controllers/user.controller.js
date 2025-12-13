@@ -64,4 +64,55 @@ const getUserById = async (req, res, next) => {
   }
 };
 
-module.exports = { getMe, listUsers, getUserById };
+/**
+ * Admin-only: Promote/change a user's role
+ * POST /users/:id/promote
+ */
+const promoteUser = async (req, res, next) => {
+  try {
+    const targetId = req.params.id;
+    const { role } = req.body;
+    const requester = req.user;
+
+    if (!requester || requester.role !== 'admin') {
+      return res.status(403).json({ message: 'Forbidden: admin access required' });
+    }
+
+    // Find target user
+    const user = await User.findById(targetId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Prevent self-demotion from admin
+    if (requester.id === targetId && role !== 'admin') {
+      return res.status(400).json({
+        message: 'Cannot demote yourself from admin role. Use another admin account.',
+      });
+    }
+
+    const oldRole = user.role;
+
+    // Update role and add to role history
+    user.role = role;
+    if (!user.roleHistory) {
+      user.roleHistory = [];
+    }
+    user.roleHistory.push({
+      role,
+      changedBy: requester.id,
+      changedAt: new Date(),
+    });
+
+    await user.save();
+
+    return res.json({
+      message: `User role updated from '${oldRole}' to '${role}'`,
+      user: user.toJSON(),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { getMe, listUsers, getUserById, promoteUser };
