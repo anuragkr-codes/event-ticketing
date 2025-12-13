@@ -1,6 +1,6 @@
 const Event = require('../models/event.model');
 const Booking = require('../models/booking.model');
-const User = require('../models/user.model');
+const { User } = require('../models/user.model');
 
 /**
  * GET /events/:id/attendees
