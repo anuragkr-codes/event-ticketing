@@ -7,7 +7,7 @@ const router = express.Router();
 const url =
   process.env.NODE_ENV === 'development'
     ? `http://localhost:${process.env.PORT}/api/v1`
-    : 'https://your-production-domain.com/api/v1';
+    : `${process.env.BASE_URL}/api/v1`;
 
 const options = {
   definition: {
