@@ -25,7 +25,7 @@ An event management system with role-based access control, booking functionality
 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/anuragkr-codes/event-ticketing.git
 cd event-ticketing
 ```
 
