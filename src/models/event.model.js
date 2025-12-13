@@ -21,6 +21,7 @@ const eventSchema = new mongoose.Schema(
     organizerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     status: { type: String, enum: ['draft', 'published', 'cancelled'], default: 'draft' },
     metadata: { type: mongoose.Schema.Types.Mixed },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

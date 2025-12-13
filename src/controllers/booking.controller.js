@@ -28,7 +28,7 @@ exports.createBooking = async (req, res, next) => {
 
     // Step 1: find event and ensure published
     const event = await Event.findById(eventId).lean();
-    if (!event) return res.status(404).json({ message: 'Event not found' });
+    if (!event || event.isDeleted) return res.status(404).json({ message: 'Event not found' });
     if (event.status !== 'published') {
       return res.status(403).json({ message: 'Event is not available for booking' });
     }

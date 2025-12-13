@@ -46,7 +46,7 @@ exports.listEvents = async (req, res, next) => {
     const { page = 1, limit = 20, category, from, to, q } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
-    const filter = { status: 'published' };
+    const filter = { status: 'published', isDeleted: false };
 
     if (category) filter.category = category;
     if (from || to) {
@@ -71,7 +71,7 @@ exports.getEvent = async (req, res, next) => {
   try {
     const id = req.params.id;
     const event = await Event.findById(id);
-    if (!event) return res.status(404).json({ message: 'Event not found' });
+    if (!event || event.isDeleted) return res.status(404).json({ message: 'Event not found' });
     // Return published event or allow organizer/admin to view drafts & cancelled
     if (event.status !== 'published') {
       // if unauthenticated or not organizer/admin, deny
@@ -83,6 +83,93 @@ exports.getEvent = async (req, res, next) => {
       }
     }
     res.json({ event });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateEvent = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const event = await Event.findById(id);
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    if (event.isDeleted) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Check authorization: must be the organizer or an admin
+    const user = req.user;
+    const isOwner = user && user.id && event.organizerId.toString() === user.id;
+    const isAdmin = user && user.role === 'admin';
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: 'Forbidden: only organizer or admin can update' });
+    }
+
+    // Update allowed fields
+    const allowedFields = [
+      'title',
+      'description',
+      'category',
+      'venue',
+      'startAt',
+      'endAt',
+      'capacity',
+      'price',
+      'status',
+      'metadata',
+    ];
+
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        event[field] = req.body[field];
+      }
+    });
+
+    // If capacity is updated, adjust availableSeats proportionally
+    if (req.body.capacity !== undefined) {
+      const diff = req.body.capacity - event.capacity;
+      event.availableSeats = Math.max(0, event.availableSeats + diff);
+    }
+
+    await event.save();
+    res.json({ event });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteEvent = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const event = await Event.findById(id);
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    if (event.isDeleted) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Check authorization: must be the organizer or an admin
+    const user = req.user;
+    const isOwner = user && user.id && event.organizerId.toString() === user.id;
+    const isAdmin = user && user.role === 'admin';
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: 'Forbidden: only organizer or admin can delete' });
+    }
+
+    // Soft delete: mark as deleted
+    event.isDeleted = true;
+    await event.save();
+
+    res.json({ message: 'Event deleted successfully' });
   } catch (err) {
     next(err);
   }

@@ -1,10 +1,20 @@
 // src/routes/events.routes.js
 const express = require('express');
 const router = express.Router();
-const { createEvent, listEvents, getEvent } = require('../controllers/event.controller');
+const {
+  createEvent,
+  listEvents,
+  getEvent,
+  updateEvent,
+  deleteEvent,
+} = require('../controllers/event.controller');
 const { createBooking } = require('../controllers/booking.controller');
 const { validateBody, validateQuery } = require('../middlewares/validate.middleware');
-const { createEventSchema, listEventsSchema } = require('../validators/event.validator');
+const {
+  createEventSchema,
+  listEventsSchema,
+  updateEventSchema,
+} = require('../validators/event.validator');
 const { createBookingSchema } = require('../validators/booking.validator');
 const { authenticate, optionalAuthenticate } = require('../middlewares/auth.middleware');
 const { authorize } = require('../middlewares/authorize.middleware');
@@ -124,6 +134,58 @@ router.get('/', validateQuery(listEventsSchema), listEvents);
 router.get('/:id', optionalAuthenticate, getEvent);
 //general users can view event details too if it's a published event
 //admin/organizer can view event details even if it's draft/cancelled
+
+/**
+ * @openapi
+ * /events/{id}:
+ *   put:
+ *     summary: Update an event (organizer/admin only)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EventInput'
+ *     responses:
+ *       200:
+ *         description: Event updated successfully
+ *       403:
+ *         description: Forbidden - only organizer or admin can update
+ *       404:
+ *         description: Event not found
+ */
+router.put('/:id', authenticate, validateBody(updateEventSchema), updateEvent);
+
+/**
+ * @openapi
+ * /events/{id}:
+ *   delete:
+ *     summary: Delete an event (organizer/admin only) - soft delete
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Event deleted successfully
+ *       403:
+ *         description: Forbidden - only organizer or admin can delete
+ *       404:
+ *         description: Event not found
+ */
+router.delete('/:id', authenticate, deleteEvent);
 
 /**
  * @openapi
