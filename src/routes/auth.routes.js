@@ -15,9 +15,6 @@
  *           type: string
  *         password:
  *           type: string
- *         role:
- *           type: string
- *           enum: [attendee, organizer, admin]
  *
  *     LoginInput:
  *       type: object
