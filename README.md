@@ -35,11 +35,71 @@ cd event-ticketing
 npm install
 ```
 
-3. Create a `.env` file in the root directory:
+3. Set up MongoDB
+
+This project requires a MongoDB database. You have two options:
+
+**Option A: Local MongoDB with Docker (Recommended for Development)**
+
+Choose between persistent or ephemeral storage:
+
+**With Persistent Storage (Recommended)**
+
+```bash
+# Data persists across container restarts and removals
+docker run -d \
+  --name event-ticketing-mongodb \
+  -p 27017:27017 \
+  -v mongodb_data:/data/db \
+  mongo:latest
+```
+
+**Without Persistent Storage**
+
+```bash
+# Data is lost when container is removed (useful for testing)
+docker run -d \
+  --name event-ticketing-mongodb \
+  -p 27017:27017 \
+  mongo:latest
+```
+
+**Managing the Container:**
+
+```bash
+# Check container status
+docker ps
+
+# Stop/start the container (data preserved in both cases if using volume)
+docker stop event-ticketing-mongodb
+docker start event-ticketing-mongodb
+
+# Remove container (data lost without volume, preserved with volume)
+docker rm -f event-ticketing-mongodb
+
+# Remove volume (deletes all data permanently)
+docker volume rm mongodb_data
+```
+
+**Option B: Cloud-Hosted MongoDB**
+
+Use a managed MongoDB service such as:
+
+- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) (Free tier available)
+- [AWS DocumentDB](https://aws.amazon.com/documentdb/)
+- Other MongoDB-compatible cloud providers
+
+After creating your cluster, obtain the connection string from your provider's dashboard.
+
+4. Create a `.env` file in the root directory:
 
 ```env
 PORT=4000
+# For local Docker MongoDB
 MONGO_URI=mongodb://localhost:27017/event-management
+# For cloud-hosted MongoDB, use your connection string:
+# MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/event-management?retryWrites=true&w=majority
+
 JWT_SECRET=your-secret-key-here
 JWT_EXPIRES_IN=7d
 
@@ -157,7 +217,7 @@ npm run seed       # Create initial admin user
 
 Once the server is running, visit:
 
-- **Swagger UI**: `http://localhost:4000/api-docs`
+- **Swagger UI**: `http://localhost:4000/docs`
 
 ## API Endpoints
 
@@ -225,19 +285,3 @@ Tests cover:
 - User registration and role restrictions
 - JWT token validation
 - Protected endpoint access control
-
-## Environment Variables
-
-| Variable         | Description                | Required       | Default |
-| ---------------- | -------------------------- | -------------- | ------- |
-| `PORT`           | Server port                | No             | 4000    |
-| `MONGO_URI`      | MongoDB connection string  | Yes            | -       |
-| `JWT_SECRET`     | Secret key for JWT signing | Yes            | -       |
-| `JWT_EXPIRES_IN` | JWT expiration time        | No             | 7d      |
-| `ADMIN_EMAIL`    | Initial admin email        | Yes (for seed) | -       |
-| `ADMIN_PASSWORD` | Initial admin password     | Yes (for seed) | -       |
-| `ADMIN_NAME`     | Initial admin name         | Yes (for seed) | -       |
-
-## License
-
-ISC

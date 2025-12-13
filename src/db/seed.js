@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const { User } = require('../models/user.model');
-const connectDB = require('./mongoose');
+const { connectDB } = require('./mongoose');
 
 const SALT_ROUNDS = 10;
 
