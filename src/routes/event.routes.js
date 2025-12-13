@@ -2,8 +2,10 @@
 const express = require('express');
 const router = express.Router();
 const { createEvent, listEvents, getEvent } = require('../controllers/event.controller');
+const { createBooking } = require('../controllers/booking.controller');
 const { validateBody, validateQuery } = require('../middlewares/validate.middleware');
 const { createEventSchema, listEventsSchema } = require('../validators/event.validator');
+const { createBookingSchema } = require('../validators/booking.validator');
 const { authenticate, optionalAuthenticate } = require('../middlewares/auth.middleware');
 const { authorize } = require('../middlewares/authorize.middleware');
 
@@ -122,5 +124,35 @@ router.get('/', validateQuery(listEventsSchema), listEvents);
 router.get('/:id', optionalAuthenticate, getEvent);
 //general users can view event details too if it's a published event
 //admin/organizer can view event details even if it's draft/cancelled
+
+/**
+ * @openapi
+ * /events/{id}/book:
+ *   post:
+ *     summary: Book tickets for an event (authenticated)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - qty
+ *             properties:
+ *               qty:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: booking created
+ */
+router.post('/:id/book', authenticate, validateBody(createBookingSchema), createBooking);
 
 module.exports = router;
