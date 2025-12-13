@@ -9,6 +9,7 @@ const {
   deleteEvent,
 } = require('../controllers/event.controller');
 const { createBooking } = require('../controllers/booking.controller');
+const { getEventAttendees, getEventSales } = require('../controllers/report.controller');
 const { validateBody, validateQuery } = require('../middlewares/validate.middleware');
 const {
   createEventSchema,
@@ -216,5 +217,43 @@ router.delete('/:id', authenticate, deleteEvent);
  *         description: booking created
  */
 router.post('/:id/book', authenticate, validateBody(createBookingSchema), createBooking);
+
+/**
+ * @openapi
+ * /events/{id}/attendees:
+ *   get:
+ *     summary: List all attendees of an event (organizer/admin only)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of attendees
+ */
+router.get('/:id/attendees', authenticate, getEventAttendees);
+
+/**
+ * @openapi
+ * /events/{id}/sales:
+ *   get:
+ *     summary: Get event sales statistics (organizer/admin only)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Sales statistics
+ */
+router.get('/:id/sales', authenticate, getEventSales);
 
 module.exports = router;
