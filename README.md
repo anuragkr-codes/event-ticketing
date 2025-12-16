@@ -20,6 +20,10 @@ An event management system with role-based access control, booking functionality
 - Jest + Supertest for testing
 - Swagger for API documentation
 
+## Architecture
+
+![Architecture Diagram](architecture-diagram.png)
+
 ## Installation
 
 1. Clone the repository
