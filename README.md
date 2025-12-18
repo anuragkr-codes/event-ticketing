@@ -245,6 +245,10 @@ Once the server is running, visit:
 - `PUT /api/v1/events/:id` - Update event (owner/admin)
 - `DELETE /api/v1/events/:id` - Soft delete event (owner/admin)
 
+### Bookings
+
+- `POST /api/v1/events/:id/book` - Book tickets for an event (authenticated)
+
 ### Reports
 
 - `GET /api/v1/events/:id/attendees` - List event attendees (owner/admin)
